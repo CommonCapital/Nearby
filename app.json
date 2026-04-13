@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "my-expo-app",
+    "slug": "my-expo-app",
+    "scheme": "uberclonewithrealtimemap",
+    "version": "1.0.0",
+    "web": {
+      "bundler": "metro",
+      "output": "server",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "http://localhost:8081"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Nearby requires your location to radar scan the area for nearby people."
+        }
+      ],
+      "@clerk/expo",
+      "expo-secure-store",
+      "expo-web-browser"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.alisultan.uberclone",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Nearby needs your location to find nearby people.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Nearby needs your location to track proximity.",
+        "NSLocationAlwaysUsageDescription": "Nearby needs your location to track proximity in the background."
+      }
+    },
+"android": {
+  "adaptiveIcon": {
+    "foregroundImage": "./assets/images/adaptive-icon.png",
+    "backgroundColor": "#ffffff"
+  },
+  "package": "com.alisultan.uberclone"
+}
+  }
+}
