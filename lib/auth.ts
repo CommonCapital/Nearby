@@ -62,11 +62,11 @@ export const googleOAuth = async (startOAuthFlow: any) => {
       message: "An error occurred while signing in with Google",
     };
   } catch (err: any) {
-    console.error(err);
+    console.error("Google OAuth error:", err);
     return {
       success: false,
-      code: err.code,
-      message: err?.errors[0]?.longMessage,
+      code: err?.code || "unknown_error",
+      message: err?.errors?.[0]?.longMessage || err?.message || "An unknown error occurred during sign in",
     };
   }
 };

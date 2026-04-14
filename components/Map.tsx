@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View, StyleSheet } from "react-native";
+import React, { useEffect, useState, useMemo } from "react";
+import { ActivityIndicator, Text, View, StyleSheet, Platform } from "react-native";
 import MapView, { Marker, Circle, PROVIDER_DEFAULT } from "react-native-maps";
 
 import { icons } from "constant";
@@ -31,7 +31,7 @@ const Map = () => {
 
   if (!userLatitude || !userLongitude)
     return (
-      <View className="flex justify-between items-center w-full">
+      <View className="flex justify-between items-center w-full h-full bg-gray-50 flex-1 justify-center">
         <ActivityIndicator size="small" color="#000" />
       </View>
     );
@@ -42,6 +42,21 @@ const Map = () => {
         <Text>Error: {error}</Text>
       </View>
     );
+
+  // Fallback if MapView is missing (Expo Go without native build)
+  if (!MapView) {
+    return (
+      <View className="flex-1 w-full h-full bg-slate-100 items-center justify-center p-10">
+        <View className="bg-white p-6 rounded-3xl shadow-lg border border-red-100 items-center">
+            <Text className="text-red-500 font-JakartaBold text-xl mb-2 text-center">Native Build Required</Text>
+            <Text className="text-gray-600 text-center font-Jakarta mb-4">
+              Map functionality requires a custom Development Build. Expo Go does not include the necessary native modules for this project.
+            </Text>
+            <Text className="text-slate-400 text-xs font-JakartaBold">Please run: npx expo run:ios</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <MapView
@@ -59,16 +74,18 @@ const Map = () => {
       showsUserLocation={isVisible}
       userInterfaceStyle="light"
     >
-      <Circle
-        center={{ latitude: userLatitude, longitude: userLongitude }}
-        radius={100}
-        strokeWidth={2}
-        strokeColor="rgba(20, 184, 166, 0.5)" // Dashed ring
-        fillColor="rgba(20, 184, 166, 0.05)"
-        lineDashPattern={[10, 10]}
-      />
+      {Circle && (
+        <Circle
+          center={{ latitude: userLatitude, longitude: userLongitude }}
+          radius={100}
+          strokeWidth={2}
+          strokeColor="rgba(20, 184, 166, 0.5)" // Dashed ring
+          fillColor="rgba(20, 184, 166, 0.05)"
+          lineDashPattern={[10, 10]}
+        />
+      )}
 
-      {nearbyUsers?.map((user) => (
+      {Marker && nearbyUsers?.map((user) => (
         <Marker
           key={user.id}
           coordinate={{
@@ -77,7 +94,6 @@ const Map = () => {
           }}
           title={user.name ? user.name.slice(0, 2).toUpperCase() : "AN"}
           onPress={() => setSelectedUser(user)}
-          // Using a default fallback or we can customize the marker to show initials visually
           pinColor={selectedUser?.id === user.id ? "blue" : "red"}
         />
       ))}

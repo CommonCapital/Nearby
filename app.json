@@ -2,7 +2,7 @@
   "expo": {
     "name": "my-expo-app",
     "slug": "my-expo-app",
-    "scheme": "uberclonewithrealtimemap",
+    "scheme": "nearby",
     "version": "1.0.0",
     "web": {
       "bundler": "metro",
@@ -13,6 +13,7 @@
       "tsconfigPaths": true
     },
     "plugins": [
+      "expo-dev-client",
       [
         "expo-router",
         {
@@ -27,7 +28,8 @@
       ],
       "@clerk/expo",
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      "react-native-maps"
     ],
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,18 +45,20 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.alisultan.uberclone",
+      "newArchEnabled": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Nearby needs your location to find nearby people.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Nearby needs your location to track proximity.",
         "NSLocationAlwaysUsageDescription": "Nearby needs your location to track proximity in the background."
       }
     },
-"android": {
-  "adaptiveIcon": {
-    "foregroundImage": "./assets/images/adaptive-icon.png",
-    "backgroundColor": "#ffffff"
-  },
-  "package": "com.alisultan.uberclone"
-}
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.alisultan.uberclone",
+      "newArchEnabled": true
+    }
   }
 }

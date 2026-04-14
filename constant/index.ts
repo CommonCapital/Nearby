@@ -77,14 +77,14 @@ export const onboarding = [
     title: "Discover People Near You",
     description:
       "Turn on your radar to instantly find other users within a 100-meter radius. Anonymous, fast, and real-time.",
-    icon: "radar",
+    icon: "radio",
   },
   {
     id: 2,
     title: "Send an Approach Request",
     description:
       "See someone interesting? Send a quick approach request. If they accept, you connect!",
-    icon: "paper-plane",
+    icon: "send",
   },
   {
     id: 3,

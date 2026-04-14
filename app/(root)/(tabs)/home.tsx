@@ -11,7 +11,7 @@ import { icons } from "constant";
 import { fetchAPI } from "@/lib/fetch";
 import { useLocationStore, useNearbyStore } from "@/store";
 
-const Home = () => {
+export default function Home() {
   const { user } = useUser();
   const { signOut } = useAuth();
   const { setUserLocation, isVisible, setIsVisible } = useLocationStore();
@@ -228,6 +228,4 @@ const Home = () => {
 
     </SafeAreaView>
   );
-};
-
-export default Home;
+}

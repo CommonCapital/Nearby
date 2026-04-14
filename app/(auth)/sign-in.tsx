@@ -1,6 +1,6 @@
 
 import { Link, router } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, Image, ScrollView, Text, View } from "react-native";
 
 import CustomButton from "components/CustomButton";
@@ -13,11 +13,17 @@ const SignIn = () => {
   const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
   const { client, setActive } = useClerk();
   const signIn = client.signIn; // ← get signIn from client
- // ← get signUp from client
+  // ← get signUp from client
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.replace("/(root)/(tabs)/home");
+    }
+  }, [isLoaded, isSignedIn]);
 
   const onSignInPress = useCallback(async () => {
     if (!isLoaded) return;
