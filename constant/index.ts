@@ -74,24 +74,24 @@ export const icons = {
 export const onboarding = [
   {
     id: 1,
-    title: "The perfect ride is just a tap away!",
+    title: "Discover People Near You",
     description:
-      "Your journey begins with Ryde. Find your ideal ride effortlessly.",
-    image: images.onboarding1,
+      "Turn on your radar to instantly find other users within a 100-meter radius. Anonymous, fast, and real-time.",
+    icon: "radar",
   },
   {
     id: 2,
-    title: "Best car in your hands with Ryde",
+    title: "Send an Approach Request",
     description:
-      "Discover the convenience of finding your perfect ride with Ryde",
-    image: images.onboarding2,
+      "See someone interesting? Send a quick approach request. If they accept, you connect!",
+    icon: "paper-plane",
   },
   {
     id: 3,
-    title: "Your ride, your way. Let's go!",
+    title: "Chat and Meet Up",
     description:
-      "Enter your destination, sit back, and let us take care of the rest.",
-    image: images.onboarding3,
+      "Once connected, start chatting instantly in the app and make it happen in real life.",
+    icon: "chatbubbles",
   },
 ];
 

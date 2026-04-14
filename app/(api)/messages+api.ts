@@ -36,6 +36,18 @@ export async function POST(request: Request) {
       return Response.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    // Check total messages to enforce the 3 messages maximum restriction
+    const messageCountResult = await sql`
+      SELECT COUNT(*) as count 
+      FROM messages 
+      WHERE (sender_clerk_id = ${senderId} AND receiver_clerk_id = ${receiverId})
+         OR (sender_clerk_id = ${receiverId} AND receiver_clerk_id = ${senderId})
+    `;
+    
+    if (parseInt(messageCountResult[0].count) >= 3) {
+      return Response.json({ error: "Maximum limit of 3 messages reached for this chat." }, { status: 403 });
+    }
+
     const response = await sql`
       INSERT INTO messages (sender_clerk_id, receiver_clerk_id, content) 
       VALUES (${senderId}, ${receiverId}, ${content})

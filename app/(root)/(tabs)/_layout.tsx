@@ -11,16 +11,16 @@ const TabIcon = ({
   focused: boolean;
 }) => (
   <View
-    className={`flex flex-row justify-center items-center rounded-full ${focused ? "bg-general-300" : ""}`}
+    className={`flex flex-row justify-center items-center w-full h-full`}
   >
     <View
-      className={`rounded-full w-12 h-12 items-center justify-center ${focused ? "bg-general-400" : ""}`}
+      className={`w-full h-full items-center justify-center border-t-2 ${focused ? "border-[#0B1F3B]" : "border-transparent"}`}
     >
       <Image
         source={source}
-        tintColor="white"
+        tintColor={focused ? "#0B1F3B" : "rgba(11, 31, 59, 0.3)"}
         resizeMode="contain"
-        className="w-7 h-7"
+        className="w-6 h-6"
       />
     </View>
   </View>
@@ -31,17 +31,15 @@ export default function Layout() {
     <Tabs
       initialRouteName="home"
       screenOptions={{
-        tabBarActiveTintColor: "white",
-        tabBarInactiveTintColor: "white",
+        tabBarActiveTintColor: "#0B1F3B",
+        tabBarInactiveTintColor: "rgba(11, 31, 59, 0.3)",
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "#333333",
-          borderRadius: 50,
-          paddingBottom: 0, // ios only
-          overflow: "hidden",
-          marginHorizontal: 20,
-          marginBottom: 20,
-          height: 78,
+          backgroundColor: "#FFFFFF",
+          borderTopWidth: 1,
+          borderTopColor: "rgba(11, 31, 59, 0.1)",
+          paddingBottom: 20, 
+          height: 80,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",

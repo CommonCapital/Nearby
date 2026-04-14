@@ -33,47 +33,47 @@ export default function Chat() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="px-5 py-6 flex-1">
-        <Text className="text-3xl font-JakartaExtraBold text-black mb-5">
+      <View className="px-6 py-8 flex-1 bg-white">
+        <Text className="text-4xl font-JakartaExtraBold text-[#0B1F3B] mb-2 tracking-tight">
           Connections
         </Text>
-        <Text className="text-gray-500 font-Jakarta mb-5">
-          Mutual approaches.
+        <Text className="text-[#0B1F3B80] font-JakartaMedium mb-8">
+          Mutual approaches and active contracts.
         </Text>
 
         {loading ? (
-          <ActivityIndicator size="large" color="#14B8A6" className="mt-10" />
+          <ActivityIndicator size="large" color="#0B1F3B" className="mt-10" />
         ) : (
           <FlatList
             data={friends}
             keyExtractor={(item) => item.clerk_id}
             ListEmptyComponent={() => (
-              <View className="flex flex-col items-center justify-center mt-20">
-                <Text className="text-gray-500 font-Jakarta text-base">You haven't connected with anyone nearby yet.</Text>
+              <View className="flex flex-col items-center justify-center mt-20 border border-[#0B1F3B1A] p-8 rounded-[4px] bg-[#FFFFFF]">
+                <Text className="text-[#0B1F3B80] font-JakartaMedium text-base">No active connections yet.</Text>
               </View>
             )}
             renderItem={({ item }) => (
               <TouchableOpacity 
-                // In a perfect world this routes to the direct message view: '/(root)/chat/[id]'
-                onPress={() => console.log('Route to Chat details for', item.clerk_id)}
-                className="flex flex-row items-center bg-gray-50 p-4 mb-3 rounded-2xl shadow-sm border border-gray-100"
+                onPress={() => router.push(`/(root)/chat/${item.clerk_id}`)}
+                className="flex flex-row items-center bg-white p-6 mb-4 rounded-[4px] border border-[#0B1F3B1A]"
+                style={{ shadowColor: '#0B1F3B', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 32, elevation: 2 }}
               >
-                <View className="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mr-4">
-                    <Text className="text-teal-700 font-JakartaBold text-xl">
+                <View className="w-12 h-12 bg-[#0B1F3B] rounded-[2px] flex items-center justify-center mr-5">
+                    <Text className="text-white font-JakartaBold text-lg">
                       {item.name?.slice(0, 2).toUpperCase() || 'AN'}
                     </Text>
                 </View>
 
                 <View className="flex-1 flex flex-col">
-                  <Text className="font-JakartaBold text-lg text-gray-800">
+                  <Text className="font-JakartaBold text-xl text-[#0B1F3B] tracking-tight">
                     {item.name || "Anonymous"}
                   </Text>
-                  <Text className="text-sm font-JakartaMedium text-teal-600 mt-1">
-                    Tap to chat
+                  <Text className="text-sm font-JakartaMedium text-[#0B1F3B80] mt-1">
+                    EXECUTE CHAT PROTOCOL
                   </Text>
                 </View>
                 
-                <Image source={icons.to} className="w-5 h-5 opacity-40" />
+                <Image source={icons.to} style={{ tintColor: '#0B1F3B', opacity: 0.3 }} className="w-5 h-5" />
               </TouchableOpacity>
             )}
           />

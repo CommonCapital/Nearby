@@ -7,8 +7,9 @@ import { ReactNativeModal } from "react-native-modal";
 import CustomButton from "components/CustomButton";
 import InputField from "components/InputField";
 import OAuth from "components/OAuth";
-import { icons, images } from "constant";
+import { icons } from "constant";
 import { fetchAPI } from "lib/fetch";
+import { Ionicons } from "@expo/vector-icons";
 
 const SignUp = () => {
   
@@ -89,10 +90,12 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-1 bg-white">
-        <View className="relative w-full h-[250px]">
-          <Image source={images.signUpCar} className="z-0 w-full h-[250px]" />
-          <Text className="text-2xl text-black font-JakartaSemiBold absolute bottom-5 left-5">
-            Create Your Account
+        <View className="relative w-full h-[200px] flex justify-end pb-8 px-6 bg-[#0B1536] rounded-b-[40px] shadow-lg shadow-indigo-900/20">
+          <Text className="text-4xl text-white font-JakartaExtraBold tracking-tight">
+            Create Account
+          </Text>
+          <Text className="text-[#8B98C6] mt-2 font-Jakarta text-base">
+            Join nearby and start discovering today.
           </Text>
         </View>
         <View className="p-5">
@@ -128,10 +131,10 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
           <OAuth />
           <Link
             href="/sign-in"
-            className="text-lg text-center text-general-200 mt-10"
+            className="text-lg text-center text-[#64748B] mt-10"
           >
             Already have an account?{" "}
-            <Text className="text-primary-500">Log In</Text>
+            <Text className="text-[#0B1536] font-JakartaBold">Log In</Text>
           </Link>
         </View>
         <ReactNativeModal
@@ -176,10 +179,9 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
         </ReactNativeModal>
         <ReactNativeModal isVisible={showSuccessModal}>
           <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
-            <Image
-              source={images.check}
-              className="w-[110px] h-[110px] mx-auto my-5"
-            />
+            <View className="items-center justify-center my-6">
+               <Ionicons name="checkmark-circle" size={110} color="#10B981" />
+            </View>
             <Text className="text-3xl font-JakartaBold text-center">
               Verified
             </Text>

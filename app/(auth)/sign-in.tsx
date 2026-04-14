@@ -6,7 +6,7 @@ import { Alert, Image, ScrollView, Text, View } from "react-native";
 import CustomButton from "components/CustomButton";
 import InputField from "components/InputField";
 import OAuth from "components/OAuth";
-import { icons, images } from "constant";
+import { icons } from "constant";
 import { useAuth, useClerk } from "@clerk/expo";
 
 const SignIn = () => {
@@ -45,10 +45,12 @@ const SignIn = () => {
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-1 bg-white">
-        <View className="relative w-full h-[250px]">
-          <Image source={images.signUpCar} className="z-0 w-full h-[250px]" />
-          <Text className="text-2xl text-black font-JakartaSemiBold absolute bottom-5 left-5">
+        <View className="relative w-full h-[200px] flex justify-end pb-8 px-6 bg-[#0B1536] rounded-b-[40px] shadow-lg shadow-indigo-900/20">
+          <Text className="text-4xl text-white font-JakartaExtraBold tracking-tight">
             Welcome 👋
+          </Text>
+          <Text className="text-[#8B98C6] mt-2 font-Jakarta text-base">
+            Log in to continue finding people nearby.
           </Text>
         </View>
 
@@ -82,10 +84,10 @@ const SignIn = () => {
 
           <Link
             href="/sign-up"
-            className="text-lg text-center text-general-200 mt-10"
+            className="text-lg text-center text-[#64748B] mt-10"
           >
             Don't have an account?{" "}
-            <Text className="text-primary-500">Sign Up</Text>
+            <Text className="text-[#0B1536] font-JakartaBold">Sign Up</Text>
           </Link>
         </View>
       </View>
