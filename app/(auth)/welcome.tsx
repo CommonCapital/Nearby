@@ -17,42 +17,42 @@ const Home = () => {
   const isLastSlide = activeIndex === onboarding.length - 1;
 
   return (
-    <SafeAreaView className="flex h-full items-center justify-between bg-white">
+    <SafeAreaView className="flex h-full items-center justify-between bg-white swiss-grid">
       <TouchableOpacity
         onPress={() => {
           router.replace("/(auth)/sign-up");
         }}
         className="w-full flex justify-end items-end p-6"
       >
-        <Text className="text-[#9CA3AF] text-base font-JakartaBold tracking-wide">Skip</Text>
+        <Text className="text-primary/40 text-base font-JakartaBold tracking-widest uppercase">Skip</Text>
       </TouchableOpacity>
 
       <Swiper
         ref={swiperRef}
         loop={false}
         dot={
-          <View className="w-[8px] h-[8px] mx-1.5 bg-[#F3F4F6] rounded-full" />
+          <View className="w-[8px] h-[8px] mx-1.5 bg-primary/10 rounded-full" />
         }
         activeDot={
-          <View className="w-[32px] h-[8px] mx-1.5 bg-[#4F46E5] rounded-full" />
+          <View className="w-[32px] h-[8px] mx-1.5 bg-primary rounded-full" />
         }
         onIndexChanged={(index) => setActiveIndex(index)}
       >
         {onboarding.map((item: any) => (
           <View key={item.id} className="flex items-center justify-center p-8 mt-12">
             
-            {/* Elegant Icon Container */}
-            <View className="w-48 h-48 rounded-full bg-indigo-50/50 border border-indigo-100 flex items-center justify-center mb-16 shadow-sm">
-              <View className="w-36 h-36 rounded-full bg-indigo-100/80 flex items-center justify-center shadow-lg">
-                <Ionicons name={item.icon} size={64} color="#4F46E5" />
+            {/* Brutalist Icon Container */}
+            <View className="w-56 h-56 rounded-brutalist bg-white border border-primary/20 flex items-center justify-center mb-16 shadow-orangeMedium">
+              <View className="w-44 h-44 rounded-brutalist bg-primary/5 border border-primary/10 flex items-center justify-center">
+                <Ionicons name={item.icon} size={72} color="#FF6A00" />
               </View>
             </View>
             
-            <Text className="text-black text-3xl font-JakartaExtraBold text-center mb-4 tracking-tight">
+            <Text className="text-primary text-3xl font-JakartaExtraBold text-center mb-4 tracking-tighter uppercase">
               {item.title}
             </Text>
             
-            <Text className="text-[17px] font-JakartaMedium text-center text-[#6B7280] leading-7 px-2">
+            <Text className="text-[17px] font-JakartaMedium text-center text-primary/60 leading-7 px-4">
               {item.description}
             </Text>
 
@@ -60,7 +60,7 @@ const Home = () => {
         ))}
       </Swiper>
 
-      <View className="w-full px-6 pb-12">
+      <View className="w-full px-8 pb-12">
         <CustomButton
           title={isLastSlide ? "Get Started" : "Next"}
           onPress={() =>
@@ -68,7 +68,7 @@ const Home = () => {
               ? router.replace("/(auth)/sign-up")
               : swiperRef.current?.scrollBy(1)
           }
-          className="w-full bg-[#4F46E5] shadow-lg shadow-indigo-300 py-3.5 rounded-full"
+          className="w-full shadow-orangeStrong"
         />
       </View>
     </SafeAreaView>

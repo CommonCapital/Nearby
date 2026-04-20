@@ -31,28 +31,28 @@ const Map = () => {
 
   if (!userLatitude || !userLongitude)
     return (
-      <View className="flex justify-between items-center w-full h-full bg-gray-50 flex-1 justify-center">
-        <ActivityIndicator size="small" color="#000" />
+      <View className="flex justify-between items-center w-full h-full bg-white flex-1 justify-center">
+        <ActivityIndicator size="small" color="#FF6A00" />
       </View>
     );
 
   if (error)
     return (
       <View className="flex justify-between items-center w-full">
-        <Text>Error: {error}</Text>
+        <Text className="text-primary font-JakartaBold">Error: {error}</Text>
       </View>
     );
 
   // Fallback if MapView is missing (Expo Go without native build)
   if (!MapView) {
     return (
-      <View className="flex-1 w-full h-full bg-slate-100 items-center justify-center p-10">
-        <View className="bg-white p-6 rounded-3xl shadow-lg border border-red-100 items-center">
-            <Text className="text-red-500 font-JakartaBold text-xl mb-2 text-center">Native Build Required</Text>
-            <Text className="text-gray-600 text-center font-Jakarta mb-4">
+      <View className="flex-1 w-full h-full bg-white items-center justify-center p-10">
+        <View className="bg-white p-8 rounded-brutalist border border-primary/10 shadow-orange items-center">
+            <Text className="text-primary font-JakartaExtraBold text-xl mb-4 text-center">NATIVE BUILD REQUIRED</Text>
+            <Text className="text-primary/70 text-center font-JakartaMedium mb-6 leading-6">
               Map functionality requires a custom Development Build. Expo Go does not include the necessary native modules for this project.
             </Text>
-            <Text className="text-slate-400 text-xs font-JakartaBold">Please run: npx expo run:ios</Text>
+            <Text className="text-primary/40 text-xs font-JakartaBold uppercase tracking-widest">Run: npx expo run:ios</Text>
         </View>
       </View>
     );
@@ -61,14 +61,14 @@ const Map = () => {
   return (
     <MapView
       provider={PROVIDER_DEFAULT}
-      style={{ width: '100%', height: '100%', borderRadius: 16 }}
-      tintColor="#14B8A6" // Teal tint for Nearby
+      style={{ width: '100%', height: '100%' }}
+      tintColor="#FF6A00"
       mapType="mutedStandard"
       showsPointsOfInterests={false}
       initialRegion={{
         latitude: userLatitude,
         longitude: userLongitude,
-        latitudeDelta: 0.002, // Zoomed in to roughly 100-200m scale
+        latitudeDelta: 0.002, 
         longitudeDelta: 0.002,
       }}
       showsUserLocation={isVisible}
@@ -78,10 +78,10 @@ const Map = () => {
         <Circle
           center={{ latitude: userLatitude, longitude: userLongitude }}
           radius={100}
-          strokeWidth={2}
-          strokeColor="rgba(20, 184, 166, 0.5)" // Dashed ring
-          fillColor="rgba(20, 184, 166, 0.05)"
-          lineDashPattern={[10, 10]}
+          strokeWidth={1}
+          strokeColor="rgba(255, 106, 0, 0.3)" 
+          fillColor="rgba(255, 106, 0, 0.03)"
+          lineDashPattern={[5, 10]}
         />
       )}
 
@@ -94,8 +94,9 @@ const Map = () => {
           }}
           title={user.name ? user.name.slice(0, 2).toUpperCase() : "AN"}
           onPress={() => setSelectedUser(user)}
-          pinColor={selectedUser?.id === user.id ? "blue" : "red"}
-        />
+        >
+           <View className={`w-4 h-4 rounded-full border-2 border-white shadow-orangeMedium ${selectedUser?.id === user.id ? 'bg-primary w-6 h-6' : 'bg-primary/80'}`} />
+        </Marker>
       ))}
     </MapView>
   );

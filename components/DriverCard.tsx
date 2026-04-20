@@ -10,8 +10,8 @@ const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
     <TouchableOpacity
       onPress={setSelected}
       className={`${
-        selected === item.id ? "bg-general-600" : "bg-white"
-      } flex flex-row items-center justify-between py-5 px-3 rounded-xl`}
+        selected === item.id ? "bg-primary/10 border-primary" : "bg-white border-primary/5"
+      } flex flex-row items-center justify-between py-5 px-3 rounded-brutalist border`}
     >
       <Image
         source={{ uri: item.profile_image_url }}
@@ -20,35 +20,35 @@ const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
 
       <View className="flex-1 flex flex-col items-start justify-center mx-3">
         <View className="flex flex-row items-center justify-start mb-1">
-          <Text className="text-lg font-JakartaRegular">{item.title}</Text>
+          <Text className="text-lg font-JakartaBold text-primary">{item.title}</Text>
 
           <View className="flex flex-row items-center space-x-1 ml-2">
-            <Image source={icons.star} className="w-3.5 h-3.5" />
-            <Text className="text-sm font-JakartaRegular">4</Text>
+            <Image source={icons.star} className="w-3.5 h-3.5 tint-primary" />
+            <Text className="text-sm font-JakartaMedium text-primary">4</Text>
           </View>
         </View>
 
         <View className="flex flex-row items-center justify-start">
           <View className="flex flex-row items-center">
-            <Image source={icons.dollar} className="w-4 h-4" />
-            <Text className="text-sm font-JakartaRegular ml-1">
+            <Image source={icons.dollar} className="w-4 h-4 tint-primary" />
+            <Text className="text-sm font-JakartaBold text-primary ml-1">
               ${item.price}
             </Text>
           </View>
 
-          <Text className="text-sm font-JakartaRegular text-general-800 mx-1">
+          <Text className="text-sm font-JakartaRegular text-primary/30 mx-1">
             |
           </Text>
 
-          <Text className="text-sm font-JakartaRegular text-general-800">
+          <Text className="text-sm font-JakartaMedium text-primary/70">
             {formatTime(item.time!)}
           </Text>
 
-          <Text className="text-sm font-JakartaRegular text-general-800 mx-1">
+          <Text className="text-sm font-JakartaRegular text-primary/30 mx-1">
             |
           </Text>
 
-          <Text className="text-sm font-JakartaRegular text-general-800">
+          <Text className="text-sm font-JakartaMedium text-primary/70">
             {item.car_seats} seats
           </Text>
         </View>

@@ -44,10 +44,15 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
         state: "pending",
       });
     } catch (err: any) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.log(JSON.stringify(err, null, 2));
-      Alert.alert("Error", err.errors[0].longMessage);
+
+      // Handle specific "session_exists" error gracefully
+      if (err.errors?.[0]?.code === "session_exists") {
+        router.replace("/(root)/(tabs)/home");
+        return;
+      }
+
+      Alert.alert("Error", err.errors?.[0]?.longMessage || "An unexpected error occurred. Please try again.");
     }
   };
   const onPressVerify = async () => {
@@ -78,45 +83,51 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
         });
       }
     } catch (err: any) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
+      console.log(JSON.stringify(err, null, 2));
+      
+      // Handle session exists case in verification as well
+      if (err.errors?.[0]?.code === "session_exists") {
+        router.replace("/(root)/(tabs)/home");
+        return;
+      }
+
       setVerification({
         ...verification,
-        error: err.errors[0].longMessage,
+        error: err.errors?.[0]?.longMessage || "An unexpected error occurred during verification.",
         state: "failed",
       });
     }
   };
   return (
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white swiss-grid">
       <View className="flex-1 bg-white">
-        <View className="relative w-full h-[200px] flex justify-end pb-8 px-6 bg-[#0B1536] rounded-b-[40px] shadow-lg shadow-indigo-900/20">
-          <Text className="text-4xl text-white font-JakartaExtraBold tracking-tight">
-            Create Account
+        <View className="relative w-full h-[220px] flex justify-end pb-10 px-8 bg-white border-b-2 border-primary shadow-orangeMedium">
+          <Text className="text-4xl text-primary font-JakartaExtraBold tracking-tighter uppercase">
+            REGISTER
           </Text>
-          <Text className="text-[#8B98C6] mt-2 font-Jakarta text-base">
-            Join nearby and start discovering today.
+          <Text className="text-primary/60 mt-3 font-JakartaMedium text-base uppercase tracking-widest text-xs">
+            Initiate new identification node in the nearby mesh.
           </Text>
         </View>
-        <View className="p-5">
+        <View className="p-8">
           <InputField
-            label="Name"
-            placeholder="Enter name"
+            label="NAME / ALIAS"
+            placeholder="ACCESS_NAME"
             icon={icons.person}
             value={form.name}
             onChangeText={(value) => setForm({ ...form, name: value })}
           />
           <InputField
-            label="Email"
-            placeholder="Enter email"
+            label="ID / EMAIL"
+            placeholder="ACCESS_EMAIL@DOMAIN.COM"
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
             onChangeText={(value) => setForm({ ...form, email: value })}
           />
           <InputField
-            label="Password"
-            placeholder="Enter password"
+            label="ACCESS_CODE"
+            placeholder="SECURE_PASSWORD"
             icon={icons.lock}
             secureTextEntry={true}
             textContentType="password"
@@ -124,41 +135,33 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
           <CustomButton
-            title="Sign Up"
+            title="Authorize Entry"
             onPress={onSignUpPress}
-            className="mt-6"
+            className="mt-8 shadow-orangeStrong"
           />
           <OAuth />
           <Link
             href="/sign-in"
-            className="text-lg text-center text-[#64748B] mt-10"
+            className="text-base text-center text-primary/40 mt-12 lowercase tracking-wider"
           >
-            Already have an account?{" "}
-            <Text className="text-[#0B1536] font-JakartaBold">Log In</Text>
+            Already synchronized?{" "}
+            <Text className="text-primary font-JakartaBold uppercase">Authenticate</Text>
           </Link>
         </View>
         <ReactNativeModal
           isVisible={verification.state === "pending"}
-          // onBackdropPress={() =>
-          //   setVerification({ ...verification, state: "default" })
-          // }
-          onModalHide={() => {
-            if (verification.state === "success") {
-              setShowSuccessModal(true);
-            }
-          }}
         >
-          <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
-            <Text className="font-JakartaExtraBold text-2xl mb-2">
-              Verification
+          <View className="bg-white px-8 py-10 rounded-brutalist border-2 border-primary min-h-[350px]">
+            <Text className="font-JakartaExtraBold text-2xl text-primary mb-4 uppercase tracking-tight">
+              VERIFICATION
             </Text>
-            <Text className="font-Jakarta mb-5">
-              We've sent a verification code to {form.email}.
+            <Text className="font-JakartaMedium text-primary/60 mb-8 leading-6">
+              A verification sequence has been transmitted to {form.email}.
             </Text>
             <InputField
-              label={"Code"}
+              label={"SEQ_CODE"}
               icon={icons.lock}
-              placeholder={"12345"}
+              placeholder={"00000"}
               value={verification.code}
               keyboardType="numeric"
               onChangeText={(code) =>
@@ -166,35 +169,35 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
               }
             />
             {verification.error && (
-              <Text className="text-red-500 text-sm mt-1">
-                {verification.error}
+              <Text className="text-primary font-JakartaBold text-xs mt-2 uppercase tracking-wide">
+                ERROR: {verification.error}
               </Text>
             )}
             <CustomButton
-              title="Verify Email"
+              title="Confirm Identity"
               onPress={onPressVerify}
-              className="mt-5 bg-success-500"
+              className="mt-8 shadow-orangeMedium"
             />
           </View>
         </ReactNativeModal>
         <ReactNativeModal isVisible={showSuccessModal}>
-          <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
-            <View className="items-center justify-center my-6">
-               <Ionicons name="checkmark-circle" size={110} color="#10B981" />
+          <View className="bg-white px-8 py-10 rounded-brutalist border-2 border-primary min-h-[350px] items-center justify-center">
+            <View className="items-center justify-center mb-8">
+               <Ionicons name="checkmark-circle" size={120} color="#FF6A00" />
             </View>
-            <Text className="text-3xl font-JakartaBold text-center">
-              Verified
+            <Text className="text-3xl font-JakartaExtraBold text-primary uppercase tracking-tighter">
+              SYNCED
             </Text>
-            <Text className="text-base text-gray-400 font-Jakarta text-center mt-2">
-              You have successfully verified your account.
+            <Text className="text-base text-primary/60 font-JakartaMedium text-center mt-4 px-6 leading-6">
+              Your identity has been successfully synchronized with the mesh.
             </Text>
             <CustomButton
-              title="Browse Home"
+              title="Enter Mesh"
               onPress={() => {
                 setShowSuccessModal(false);
                 router.push(`/(root)/(tabs)/home`);
               }}
-              className="mt-5"
+              className="mt-10 w-full shadow-orangeStrong"
             />
           </View>
         </ReactNativeModal>

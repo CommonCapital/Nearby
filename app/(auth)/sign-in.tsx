@@ -44,26 +44,33 @@ const SignIn = () => {
       }
     } catch (err: any) {
       console.log(JSON.stringify(err, null, 2));
-      Alert.alert("Error", err.errors[0].longMessage);
+
+      // Handle specific "session_exists" error gracefully
+      if (err.errors?.[0]?.code === "session_exists") {
+        router.replace("/(root)/(tabs)/home");
+        return;
+      }
+
+      Alert.alert("Error", err.errors?.[0]?.longMessage || "An unexpected error occurred. Please try again.");
     }
   }, [isLoaded, form]);
 
   return (
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white swiss-grid">
       <View className="flex-1 bg-white">
-        <View className="relative w-full h-[200px] flex justify-end pb-8 px-6 bg-[#0B1536] rounded-b-[40px] shadow-lg shadow-indigo-900/20">
-          <Text className="text-4xl text-white font-JakartaExtraBold tracking-tight">
-            Welcome 👋
+        <View className="relative w-full h-[220px] flex justify-end pb-10 px-8 bg-white border-b-2 border-primary shadow-orangeMedium">
+          <Text className="text-4xl text-primary font-JakartaExtraBold tracking-tighter uppercase">
+            IDENTIFY👋
           </Text>
-          <Text className="text-[#8B98C6] mt-2 font-Jakarta text-base">
-            Log in to continue finding people nearby.
+          <Text className="text-primary/60 mt-3 font-JakartaMedium text-base uppercase tracking-widest text-xs">
+            Enter credentials to synchronize with nearby identifiers.
           </Text>
         </View>
 
-        <View className="p-5">
+        <View className="p-8">
           <InputField
-            label="Email"
-            placeholder="Enter email"
+            label="ID / EMAIL"
+            placeholder="ACCESS_EMAIL@DOMAIN.COM"
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
@@ -71,8 +78,8 @@ const SignIn = () => {
           />
 
           <InputField
-            label="Password"
-            placeholder="Enter password"
+            label="ACCESS_CODE"
+            placeholder="SECURE_PASSWORD"
             icon={icons.lock}
             secureTextEntry={true}
             textContentType="password"
@@ -81,19 +88,19 @@ const SignIn = () => {
           />
 
           <CustomButton
-            title="Sign In"
+            title="Authenticate"
             onPress={onSignInPress}
-            className="mt-6"
+            className="mt-8 shadow-orangeStrong"
           />
 
           <OAuth />
 
           <Link
             href="/sign-up"
-            className="text-lg text-center text-[#64748B] mt-10"
+            className="text-base text-center text-primary/40 mt-12 lowercase tracking-wider"
           >
-            Don't have an account?{" "}
-            <Text className="text-[#0B1536] font-JakartaBold">Sign Up</Text>
+            No identification?{" "}
+            <Text className="text-primary font-JakartaBold uppercase">Establish Node</Text>
           </Link>
         </View>
       </View>

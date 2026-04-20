@@ -76,7 +76,7 @@ export const onboarding = [
     id: 1,
     title: "Discover People Near You",
     description:
-      "Turn on your radar to instantly find other users within a 100-meter radius. Anonymous, fast, and real-time.",
+      "Turn on your radar to instantly find other users within a 100-meter radius. Spontaneous, fast, and real-time.",
     icon: "radio",
   },
   {

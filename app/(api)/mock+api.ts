@@ -41,8 +41,12 @@ export async function POST(request: Request) {
     return new Response(JSON.stringify({ data: response }), {
       status: 201,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating mock user:", error);
-    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+    return Response.json({ 
+      error: "Internal Server Error", 
+      details: error.message,
+      stack: error.stack 
+    }, { status: 500 });
   }
 }

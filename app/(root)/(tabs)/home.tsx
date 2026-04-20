@@ -2,11 +2,12 @@ import { useUser, useAuth } from "@clerk/expo";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState, useEffect } from "react";
-import { Text, View, TouchableOpacity, Image, TextInput } from "react-native";
+import { Text, View, TouchableOpacity, Image, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ReactNativeModal } from "react-native-modal";
 
 import Map from "@/components/Map";
+import CustomButton from "@/components/CustomButton";
 import { icons } from "constant";
 import { fetchAPI } from "@/lib/fetch";
 import { useLocationStore, useNearbyStore } from "@/store";
@@ -121,16 +122,16 @@ export default function Home() {
   }, [user?.id, isVisible]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white swiss-grid">
       <View className="flex flex-row items-center justify-between px-5 py-4 absolute w-full z-10 pt-16 top-0">
-        <View className="bg-white rounded-full px-4 py-2 shadow-sm flex flex-row items-center">
-             <View className={`w-3 h-3 rounded-full mr-2 ${isVisible ? 'bg-green-500' : 'bg-gray-400'}`} />
-             <Text className="font-JakartaBold">
-               {isVisible ? "Visible to Nearby" : "Invisible"}
+        <View className="bg-white rounded-brutalist px-4 py-2 shadow-orange border border-primary/10 flex flex-row items-center">
+             <View className={`w-3 h-3 rounded-full mr-2 ${isVisible ? 'bg-primary' : 'bg-primary/20'}`} />
+             <Text className="font-JakartaBold text-primary uppercase tracking-widest text-xs">
+               {isVisible ? "Active / Radar" : "Ghost / Stealth"}
              </Text>
         </View>
 
-        <View className="flex flex-row gap-3">
+        <View className="flex flex-row gap-4">
             <TouchableOpacity
               onPress={async () => {
                 try {
@@ -142,29 +143,29 @@ export default function Home() {
                       longitude: location.coords.longitude,
                     }),
                   });
-                  alert("Simulated user added nearby!");
+                  Alert.alert("Authorized", "A simulated identifier has been injected into the mesh.");
                 } catch (e) {
                   console.error(e);
-                  alert("Failed to add user");
+                  Alert.alert("Access Denied", "Simulation failed. Mesh rejection encountered.");
                 }
               }}
-              className="justify-center items-center w-10 h-10 rounded-full bg-white shadow-sm"
+              className="justify-center items-center w-12 h-12 rounded-brutalist bg-white border border-primary/20 shadow-orange"
             >
-              <Text className="font-JakartaBold text-lg text-teal-500">+</Text>
+              <Text className="font-JakartaBold text-xl text-primary">+</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => setIsVisible(!isVisible)}
-              className="justify-center items-center w-10 h-10 rounded-full bg-white shadow-sm"
+              className="justify-center items-center w-12 h-12 rounded-brutalist bg-white border border-primary/20 shadow-orange"
             >
-              <Image source={isVisible ? icons.person : icons.eyecross} className="w-5 h-5 opacity-70" resizeMode="contain" />
+              <Image source={isVisible ? icons.person : icons.eyecross} className="w-5 h-5 tint-primary" resizeMode="contain" />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={handleSignOut}
-              className="justify-center items-center w-10 h-10 rounded-full bg-white shadow-sm"
+              className="justify-center items-center w-12 h-12 rounded-brutalist bg-white border border-primary/20 shadow-orange"
             >
-              <Image source={icons.out} className="w-5 h-5 opacity-70" resizeMode="contain" />
+              <Image source={icons.out} className="w-5 h-5 tint-primary" resizeMode="contain" />
             </TouchableOpacity>
         </View>
       </View>
@@ -174,13 +175,13 @@ export default function Home() {
       </View>
 
       {/* HUD Bottom */}
-      <View className="absolute bottom-5 w-full px-5">
-        <View className="bg-white p-5 rounded-3xl shadow-lg border border-gray-100 flex flex-col pointer-events-none">
-            <Text className="text-center font-JakartaBold text-lg text-gray-800">
-                {nearbyUsers.length} People Nearby
+      <View className="absolute bottom-10 w-full px-6">
+        <View className="bg-white p-8 rounded-brutalist shadow-orangeStrong border border-primary/20 flex flex-col items-center">
+            <Text className="text-center font-JakartaMono text-3xl text-primary mb-2">
+                {nearbyUsers.length.toString().padStart(2, '0')}
             </Text>
-            <Text className="text-center font-Jakarta mt-1 text-gray-500 text-sm">
-                Radar updating live within 100m. Tap a dot to send an approach request.
+            <Text className="text-center font-JakartaBold text-xs text-primary uppercase tracking-widest opacity-60">
+                Identifiers in Range
             </Text>
         </View>
       </View>
@@ -193,20 +194,20 @@ export default function Home() {
         onSwipeComplete={() => setSelectedUser(null)}
         style={{ justifyContent: 'flex-end', margin: 0 }}
       >
-        <View className="bg-white px-7 py-9 rounded-t-3xl min-h-[350px]">
-          <View className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
+        <View className="bg-white px-8 py-10 rounded-t-[4px] border-t-2 border-primary min-h-[400px]">
+          <View className="w-16 h-[2px] bg-primary/10 rounded-full mx-auto mb-10" />
           
-          <Text className="text-2xl font-JakartaExtraBold text-center mb-2">
+          <Text className="text-2xl font-JakartaExtraBold text-primary mb-2 uppercase tracking-tight">
             Approach Request
           </Text>
-          <Text className="text-base text-gray-500 text-center mb-6 font-Jakarta">
-            Send a context-aware note to "{selectedUser?.name ? selectedUser.name.slice(0, 2).toUpperCase() : "AN"}". They will see your distance.
+          <Text className="text-base text-primary/60 mb-10 font-JakartaMedium leading-6">
+            Establishing connection to identification node "{selectedUser?.name ? selectedUser.name.slice(0, 2).toUpperCase() : "AN"}". Source tracing active.
           </Text>
 
           <TextInput
-            className="bg-gray-100 rounded-xl p-4 font-Jakarta text-base h-24 mb-6"
-            placeholder="Why would you like to connect? (e.g., 'Are you reading Dune?')"
-            placeholderTextColor="#9ca3af"
+            className="bg-primary/5 rounded-brutalist border border-primary/10 p-5 font-JakartaMono text-primary text-base h-28 mb-8"
+            placeholder="INPUT COMMUNICATION DATA..."
+            placeholderTextColor="#FF6A004D"
             multiline
             maxLength={100}
             value={noteContent}
@@ -214,15 +215,12 @@ export default function Home() {
             textAlignVertical="top"
           />
 
-          <TouchableOpacity 
+          <CustomButton 
+            title={sending ? "Processing..." : "Authorize Connection"}
             onPress={handleSendRequest}
             disabled={sending || noteContent.trim().length === 0}
-            className={`w-full py-4 rounded-full flex flex-row justify-center items-center ${sending || noteContent.trim().length === 0 ? 'bg-blue-300' : 'bg-blue-600'}`}
-          >
-            <Text className="text-white font-JakartaBold text-lg">
-              {sending ? "Sending..." : "Send Request"}
-            </Text>
-          </TouchableOpacity>
+            className={`shadow-orangeStrong ${sending || noteContent.trim().length === 0 ? 'opacity-50' : ''}`}
+          />
         </View>
       </ReactNativeModal>
 
