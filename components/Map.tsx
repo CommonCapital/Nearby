@@ -7,15 +7,24 @@ import { useFetch } from "@/lib/fetch";
 import { useNearbyStore, useLocationStore } from "@/store";
 import { useAuth } from "@clerk/expo";
 
-const Map = () => {
+const Map = ({ themeColor = "#D4537E" }: { themeColor?: string }) => {
   const { userLatitude, userLongitude, isVisible } = useLocationStore();
-  const { nearbyUsers, setSelectedUser, selectedUser, setNearbyUsers } = useNearbyStore();
+  const { nearbyUsers, setSelectedUser, selectedUser, setNearbyUsers, refetchSignal, discoveryFilter } = useNearbyStore();
   const { userId } = useAuth();
 
   // Poll for nearby users based on location
   const { data: fetchUsers, loading, error, refetch } = useFetch<any[]>(
-    `/(api)/nearby?userId=${userId}`
+    userLatitude && userLongitude 
+      ? `/(api)/nearby?userId=${userId}&lat=${userLatitude.toFixed(4)}&lng=${userLongitude.toFixed(4)}&filter=${discoveryFilter}`
+      : `/(api)/nearby?userId=${userId}&filter=${discoveryFilter}`
   );
+
+  // Reactive Signal Listener
+  useEffect(() => {
+    if (refetchSignal > 0) {
+      refetch();
+    }
+  }, [refetchSignal]);
 
   // Polling interval
   useEffect(() => {
@@ -24,7 +33,7 @@ const Map = () => {
     }
     const interval = setInterval(() => {
       refetch();
-    }, 10000); // Poll every 10 seconds
+    }, 3000); // Pulse every 3 seconds for real-time feel
 
     return () => clearInterval(interval);
   }, [fetchUsers]);
@@ -62,7 +71,7 @@ const Map = () => {
     <MapView
       provider={PROVIDER_DEFAULT}
       style={{ width: '100%', height: '100%' }}
-      tintColor="#FF6A00"
+      tintColor={themeColor}
       mapType="mutedStandard"
       showsPointsOfInterests={false}
       initialRegion={{
@@ -72,16 +81,15 @@ const Map = () => {
         longitudeDelta: 0.002,
       }}
       showsUserLocation={isVisible}
-      userInterfaceStyle="light"
+      userInterfaceStyle="dark"
     >
       {Circle && (
         <Circle
           center={{ latitude: userLatitude, longitude: userLongitude }}
           radius={100}
-          strokeWidth={1}
-          strokeColor="rgba(255, 106, 0, 0.3)" 
-          fillColor="rgba(255, 106, 0, 0.03)"
-          lineDashPattern={[5, 10]}
+          strokeWidth={2}
+          strokeColor={`${themeColor}66`} 
+          fillColor={`${themeColor}1A`}
         />
       )}
 
@@ -95,7 +103,7 @@ const Map = () => {
           title={user.name ? user.name.slice(0, 2).toUpperCase() : "AN"}
           onPress={() => setSelectedUser(user)}
         >
-           <View className={`w-4 h-4 rounded-full border-2 border-white shadow-orangeMedium ${selectedUser?.id === user.id ? 'bg-primary w-6 h-6' : 'bg-primary/80'}`} />
+           <View style={{ backgroundColor: themeColor }} className={`w-5 h-5 rounded-full border-2 border-background shadow-pulse ${selectedUser?.id === user.id ? 'w-8 h-8' : ''}`} />
         </Marker>
       ))}
     </MapView>

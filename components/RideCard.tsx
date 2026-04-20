@@ -6,7 +6,7 @@ import { Ride } from "@/types/type";
 
 const RideCard = ({ ride }: { ride: Ride }) => {
   return (
-    <View className="flex flex-row items-center justify-center bg-white rounded-[4px] border border-primary/10 shadow-orange mb-4">
+    <View className="flex flex-row items-center justify-center bg-surface rounded-organic-lg border border-primary/10 shadow-pulseMedium mb-4">
       <View className="flex flex-col items-start justify-center p-8">
         <View className="flex flex-row items-center justify-between">
           <Image

@@ -29,13 +29,13 @@ const OAuth = () => {
       </View>
 
       <CustomButton
-        title="Log In with Google"
-        className="mt-6 w-full shadow-orange"
+        title="Continue with Google"
+        className="mt-6 w-full shadow-noir"
         IconLeft={() => (
           <Image
             source={icons.google}
             resizeMode="contain"
-            className="w-5 h-5 mx-2 tint-primary opacity-80"
+            className="w-5 h-5 mx-2 tint-primary opacity-90"
           />
         )}
         bgVariant="outline"

@@ -5,7 +5,7 @@ import { ButtonProps } from "types/type";
 const getBgVariantStyle = (variant: ButtonProps["bgVariant"]) => {
   switch (variant) {
     case "outline":
-      return "bg-white border-primary border-[1px]";
+      return "bg-flesh border-primary border-[2px]";
     default:
       return "bg-primary";
   }
@@ -14,9 +14,15 @@ const getBgVariantStyle = (variant: ButtonProps["bgVariant"]) => {
 const getTextVariantStyle = (variant: ButtonProps["textVariant"]) => {
   switch (variant) {
     case "primary":
-      return "text-primary";
+      return "text-secondary";
+    case "secondary":
+      return "text-secondary";
+    case "danger":
+      return "text-red-500";
+    case "success":
+      return "text-green-500";
     default:
-      return "text-white";
+      return "text-flesh";
   }
 };
 
@@ -34,11 +40,11 @@ const CustomButton = ({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
-      className={`w-full h-[48px] rounded-brutalist flex flex-row justify-center items-center ${getBgVariantStyle(bgVariant)} ${className}`}
+      className={`w-full h-[54px] rounded-pill flex flex-row justify-center items-center shadow-pulseMedium ${getBgVariantStyle(bgVariant)} ${className}`}
       {...props}
     >
       {IconLeft && <IconLeft />}
-      <Text className={`text-base font-JakartaBold tracking-[0.1em] uppercase ${getTextVariantStyle(textVariant)}`}>
+      <Text className={`text-lg font-JakartaExtraBold tracking-wide ${getTextVariantStyle(textVariant)}`}>
         {title}
       </Text>
       {IconRight && <IconRight />}

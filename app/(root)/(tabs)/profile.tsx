@@ -1,106 +1,230 @@
+import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/expo";
-import { Image, ScrollView, Text, View, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Image, Pressable, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useLocationStore, useNearbyStore } from "@/store";
 
 import InputField from "@/components/InputField";
+import { fetchAPI } from "@/lib/fetch";
+import { THEMES } from "constant";
+
+const IDENTITIES = ['Straight Man', 'Straight Woman', 'Gay', 'Lesbian', 'Bi-sexual', 'A-sexual'];
+
+const ChipSelector = ({ label, options, selected, onSelect, theme = 'rose', editable = true }: any) => (
+  <View className="mb-6 w-full">
+    <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Jakarta-Bold', textTransform: 'uppercase', fontSize: 9, letterSpacing: 1, marginBottom: 12 }}>{label}</Text>
+    <View className="flex flex-row flex-wrap" style={{ gap: 8 }}>
+      {options.map((option: string) => {
+        const isActive = selected === option;
+        const currentTheme = THEMES[theme as keyof typeof THEMES] || THEMES.rose;
+        return (
+          <Pressable
+            key={option}
+            onPress={() => editable && onSelect(option)}
+            style={{
+              backgroundColor: isActive ? currentTheme.primary : 'rgba(255,255,255,0.05)',
+              borderColor: isActive ? currentTheme.primary : 'rgba(120,120,120,0.1)',
+              borderWidth: 1,
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 9999,
+              opacity: editable ? 1 : 0.6,
+            }}
+          >
+            <Text
+              style={{
+                color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
+                fontFamily: 'Jakarta-Bold',
+                fontSize: 10
+              }}
+            >
+              {option.toUpperCase()}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  </View>
+);
 
 const Profile = () => {
   const { user } = useUser();
+  const { theme } = useLocationStore();
+
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
+  const [bio, setBio] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [interestedIn, setInterestedIn] = useState("");
+
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Sync profile from DB on mount
+  useEffect(() => {
+    if (!user?.id) return;
+    const fetchProfile = async () => {
+      try {
+        const res = await fetchAPI(`/(api)/nearby?userId=${user?.id}`);
+        if (res.data && res.data.length > 0) {
+          // In a real app we'd have a specific /profile/me endpoint, 
+          // but for this Trinity MVP we sync with the upserted DB record
+          const dbUser = res.data.find((u: any) => u.clerk_id === user.id);
+          if (dbUser) {
+             setBio(dbUser.bio || "");
+             setAge(dbUser.age?.toString() || "");
+             setGender(dbUser.gender || "");
+             setInterestedIn(dbUser.interested_in || "");
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch profile", e);
+      }
+    };
+    fetchProfile();
+  }, [user?.id]);
 
   const handleSave = async () => {
     try {
       setSaving(true);
+      // Sync with Clerk
       await user?.update({
         firstName,
         lastName,
       });
-      // Optionally sync with backend if needed
+
+      // Sync with Trinity Database Mesh
+      await fetchAPI("/(api)/nearby", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: user?.id,
+          name: `${firstName} ${lastName}`,
+          email: user?.primaryEmailAddress?.emailAddress,
+          bio,
+          gender, // Using gender column for combined identity
+          age: parseInt(age) || null,
+          interestedIn,
+          imageUrl: user?.imageUrl, // Sync clerk image to DB
+        }),
+      });
+
       setIsEditing(false);
-      Alert.alert("Success", "Profile updated successfully!");
+      Alert.alert("Grandeur", "Identity mesh synchronized successfully.");
     } catch (error: any) {
-      Alert.alert("Error", error.errors?.[0]?.longMessage || "Failed to update profile.");
+      Alert.alert("Error", error.message || "Failed to update profile.");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        className="px-5"
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
-        <View className="flex flex-row justify-between items-center my-5">
-          <Text className="text-2xl font-JakartaBold">My Profile</Text>
-          <TouchableOpacity onPress={() => isEditing ? handleSave() : setIsEditing(true)}>
-            {saving ? (
-              <ActivityIndicator color="#14B8A6" />
-            ) : (
-              <Text className="text-teal-500 font-JakartaBold text-lg">
-                {isEditing ? "Save" : "Edit"}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View className="flex items-center justify-center my-5">
-          <Image
-            source={{
-              uri: user?.externalAccounts[0]?.imageUrl ?? user?.imageUrl,
-            }}
-            style={{ width: 110, height: 110, borderRadius: 110 / 2 }}
-            className="rounded-full h-[110px] w-[110px] border-[3px] border-white shadow-sm shadow-neutral-300"
-          />
-        </View>
-
-        <View className="flex flex-col items-start justify-center bg-white rounded-lg shadow-sm shadow-neutral-300 px-5 py-3 border border-gray-100">
-          <View className="flex flex-col items-start justify-start w-full">
-            <InputField
-              label="First name"
-              placeholder={user?.firstName || "Not Found"}
-              value={firstName}
-              onChangeText={setFirstName}
-              containerStyle="w-full"
-              inputStyle="p-3.5"
-              editable={isEditing}
-            />
-
-            <InputField
-              label="Last name"
-              placeholder={user?.lastName || "Not Found"}
-              value={lastName}
-              onChangeText={setLastName}
-              containerStyle="w-full"
-              inputStyle="p-3.5"
-              editable={isEditing}
-            />
-
-            <InputField
-              label="Email"
-              placeholder={
-                user?.primaryEmailAddress?.emailAddress || "Not Found"
-              }
-              containerStyle="w-full"
-              inputStyle="p-3.5"
-              editable={false}
-            />
-
-            <InputField
-              label="Phone"
-              placeholder={user?.primaryPhoneNumber?.phoneNumber || "Not Found"}
-              containerStyle="w-full"
-              inputStyle="p-3.5"
-              editable={false}
-            />
+    <View className={`flex-1 theme-${theme}`}>
+      <SafeAreaView className="flex-1 bg-background aura-bg">
+        <ScrollView
+          className="px-6"
+          contentContainerStyle={{ paddingBottom: 150 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex flex-row justify-between items-center my-8 mt-12">
+            <Text className="text-3xl font-JakartaExtraBold text-primary tracking-tight">Identity</Text>
+            <Pressable
+              onPress={() => isEditing ? handleSave() : setIsEditing(true)}
+              style={{
+                backgroundColor: isEditing ? THEMES[theme as keyof typeof THEMES].primary : 'rgba(255,255,255,0.05)',
+                borderColor: 'rgba(255,255,255,0.1)',
+                borderWidth: 1,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 9999,
+              }}
+            >
+              {saving ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={{ color: isEditing ? '#FFFFFF' : THEMES[theme as keyof typeof THEMES].primary, fontFamily: 'Jakarta-Bold' }}>
+                  {isEditing ? "SAVE SIGNAL" : "EDIT SIGNAL"}
+                </Text>
+              )}
+            </Pressable>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+
+          <View className="flex items-center justify-center my-10">
+            <View className="p-2 bg-surface rounded-full shadow-pulse border-2 border-primary/20">
+              <Image
+                source={{
+                  uri: user?.externalAccounts[0]?.imageUrl ?? user?.imageUrl,
+                }}
+                style={{ width: 120, height: 120, borderRadius: 60 }}
+                className="rounded-full h-[120px] w-[120px] border-4 border-background"
+              />
+            </View>
+          </View>
+
+          <View className="bg-surface/40 rounded-organic-lg p-6 border border-primary/10 shadow-noir mb-8">
+            <Text className="text-primary/40 font-JakartaBold uppercase tracking-widest text-[10px] mb-6">CORE IDENTIFIER</Text>
+            <View className="flex flex-col items-start justify-start w-full">
+              <InputField
+                label="First name"
+                placeholder="First Name"
+                value={firstName}
+                onChangeText={setFirstName}
+                containerStyle="w-full"
+                editable={isEditing}
+              />
+
+              <InputField
+                label="Last name"
+                placeholder="Last Name"
+                value={lastName}
+                onChangeText={setLastName}
+                containerStyle="w-full"
+                editable={isEditing}
+              />
+
+              <InputField
+                label="Description / Bio"
+                placeholder="Describe your signal..."
+                value={bio}
+                onChangeText={setBio}
+                containerStyle="w-full"
+                editable={isEditing}
+                multiline
+              />
+
+              <InputField
+                label="Age"
+                placeholder="Your age"
+                value={age}
+                onChangeText={setAge}
+                containerStyle="w-full"
+                editable={isEditing}
+                keyboardType="number-pad"
+              />
+
+              <ChipSelector
+                label="IDENTITY SIGNAL"
+                options={IDENTITIES}
+                selected={gender}
+                onSelect={setGender}
+                editable={isEditing}
+                theme={theme}
+              />
+
+              <ChipSelector
+                label="LOOKING FOR"
+                options={IDENTITIES}
+                selected={interestedIn}
+                onSelect={setInterestedIn}
+                editable={isEditing}
+                theme={theme}
+              />
+
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 };
 

@@ -99,35 +99,35 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
     }
   };
   return (
-    <ScrollView className="flex-1 bg-white swiss-grid">
-      <View className="flex-1 bg-white">
-        <View className="relative w-full h-[220px] flex justify-end pb-10 px-8 bg-white border-b-2 border-primary shadow-orangeMedium">
-          <Text className="text-4xl text-primary font-JakartaExtraBold tracking-tighter uppercase">
-            REGISTER
+    <ScrollView className="flex-1 bg-flesh aura-bg">
+      <View className="flex-1">
+        <View className="relative w-full h-[280px] flex justify-end pb-12 px-10 bg-[#4D0011] border-b border-primary/20 shadow-noir rounded-b-organic-lg">
+          <Text className="text-5xl text-primary font-JakartaExtraBold tracking-tighter">
+            Imperial Pulse
           </Text>
-          <Text className="text-primary/60 mt-3 font-JakartaMedium text-base uppercase tracking-widest text-xs">
-            Initiate new identification node in the nearby mesh.
+          <Text className="text-primary/60 mt-4 font-JakartaMedium text-lg leading-7">
+            Initiate your royal identifier and signal within the grandeur mesh.
           </Text>
         </View>
         <View className="p-8">
           <InputField
-            label="NAME / ALIAS"
-            placeholder="ACCESS_NAME"
+            label="Pseudonym"
+            placeholder="ENTER_NAME"
             icon={icons.person}
             value={form.name}
             onChangeText={(value) => setForm({ ...form, name: value })}
           />
           <InputField
-            label="ID / EMAIL"
-            placeholder="ACCESS_EMAIL@DOMAIN.COM"
+            label="Pulse Link"
+            placeholder="ENTER_ID"
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
             onChangeText={(value) => setForm({ ...form, email: value })}
           />
           <InputField
-            label="ACCESS_CODE"
-            placeholder="SECURE_PASSWORD"
+            label="Cipher"
+            placeholder="SECURE_CODE"
             icon={icons.lock}
             secureTextEntry={true}
             textContentType="password"
@@ -135,69 +135,77 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
           <CustomButton
-            title="Authorize Entry"
+            title="Secure Pulse"
             onPress={onSignUpPress}
-            className="mt-8 shadow-orangeStrong"
+            className="mt-10 shadow-noir"
           />
+
           <OAuth />
+
           <Link
             href="/sign-in"
-            className="text-base text-center text-primary/40 mt-12 lowercase tracking-wider"
+            className="text-lg text-center text-primary/60 mt-12 font-JakartaMedium"
           >
-            Already synchronized?{" "}
-            <Text className="text-primary font-JakartaBold uppercase">Authenticate</Text>
+            Already pulsing?{" "}
+            <Text className="text-primary font-JakartaExtraBold">Synchronize</Text>
           </Link>
         </View>
+
+        {/* Verification Modal */}
         <ReactNativeModal
           isVisible={verification.state === "pending"}
+          onModalHide={() => {
+            if (verification.state === "success") {
+              setShowSuccessModal(true);
+            }
+          }}
         >
-          <View className="bg-white px-8 py-10 rounded-brutalist border-2 border-primary min-h-[350px]">
-            <Text className="font-JakartaExtraBold text-2xl text-primary mb-4 uppercase tracking-tight">
-              VERIFICATION
+          <View className="bg-[#4D0011] px-8 py-12 rounded-organic border border-primary/10 min-h-[300px]">
+             <Text className="font-JakartaExtraBold text-3xl text-primary text-center mb-4 uppercase">
+              Confirm Pulse
             </Text>
-            <Text className="font-JakartaMedium text-primary/60 mb-8 leading-6">
-              A verification sequence has been transmitted to {form.email}.
+            <Text className="text-base text-primary/60 font-JakartaMedium text-center mb-10 leading-7 px-4">
+              An imperial cipher has been transmitted to {form.email}.
             </Text>
             <InputField
-              label={"SEQ_CODE"}
-              icon={icons.lock}
-              placeholder={"00000"}
+              label="Sync Code"
+              placeholder="000000"
               value={verification.code}
               keyboardType="numeric"
-              onChangeText={(code) =>
-                setVerification({ ...verification, code })
-              }
+              onChangeText={(code) => setVerification({ ...verification, code })}
             />
             {verification.error && (
-              <Text className="text-primary font-JakartaBold text-xs mt-2 uppercase tracking-wide">
-                ERROR: {verification.error}
+              <Text className="text-red-500 text-sm mt-2 text-center">
+                {verification.error}
               </Text>
             )}
             <CustomButton
-              title="Confirm Identity"
+              title="Activate Pulse"
               onPress={onPressVerify}
-              className="mt-8 shadow-orangeMedium"
+              className="mt-10 shadow-pulse"
             />
           </View>
         </ReactNativeModal>
+
+        {/* Success Modal */}
         <ReactNativeModal isVisible={showSuccessModal}>
-          <View className="bg-white px-8 py-10 rounded-brutalist border-2 border-primary min-h-[350px] items-center justify-center">
-            <View className="items-center justify-center mb-8">
-               <Ionicons name="checkmark-circle" size={120} color="#FF6A00" />
+          <View className="bg-[#4D0011] px-10 py-12 rounded-organic border border-primary/10 min-h-[400px] items-center justify-center shadow-pulse">
+            <View className="items-center justify-center mb-10">
+               <Ionicons name="checkmark-circle" size={140} color="#D4AF37" />
             </View>
-            <Text className="text-3xl font-JakartaExtraBold text-primary uppercase tracking-tighter">
+            <Text className="text-4xl font-JakartaExtraBold text-primary text-center tracking-tighter">
               SYNCED
             </Text>
-            <Text className="text-base text-primary/60 font-JakartaMedium text-center mt-4 px-6 leading-6">
-              Your identity has been successfully synchronized with the mesh.
+            <Text className="text-lg text-primary/60 font-JakartaMedium text-center mt-6 px-4 leading-7">
+              Your identifier is now part of the imperial pulse network.
             </Text>
             <CustomButton
-              title="Enter Mesh"
+              title="Open Radar"
               onPress={() => {
                 setShowSuccessModal(false);
                 router.push(`/(root)/(tabs)/home`);
               }}
-              className="mt-10 w-full shadow-orangeStrong"
+              className="mt-12 w-full shadow-noir"
             />
           </View>
         </ReactNativeModal>

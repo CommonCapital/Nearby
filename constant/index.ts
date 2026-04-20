@@ -95,6 +95,28 @@ export const onboarding = [
   },
 ];
 
+export const THEMES = {
+  rose: {
+    primary: "#D4537E",
+    secondary: "#EF9F27",
+    background: "#2B0F1A",
+    surface: "#4A152C",
+  },
+  golden: {
+    primary: "#EF9F27",
+    secondary: "#D4537E",
+    background: "#2B1A0F",
+    surface: "#472A15",
+  },
+  burgundy: {
+    primary: "#D4AF37",
+    secondary: "#4D0011",
+    background: "#4D0011",
+    surface: "#60001A",
+  },
+};
+
 export const data = {
   onboarding,
+  THEMES,
 };

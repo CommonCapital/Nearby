@@ -10,6 +10,7 @@ export const useLocationStore = create<LocationStore>((set) => ({
   destinationLongitude: null,
   destinationAddress: null,
   isVisible: true,
+  theme: "rose",
   setUserLocation: ({
     latitude,
     longitude,
@@ -29,6 +30,7 @@ export const useLocationStore = create<LocationStore>((set) => ({
     // Deprecated for Nearby app, keeping for type compliance if needed elsewhere temporarily
   },
   setIsVisible: (visible: boolean) => set(() => ({ isVisible: visible })),
+  setTheme: (theme: "rose" | "golden" | "burgundy") => set(() => ({ theme })),
 }));
 
 export interface NearbyUser {
@@ -37,18 +39,32 @@ export interface NearbyUser {
   name: string;
   latitude: number;
   longitude: number;
+  bio?: string;
+  gender?: string;
+  orientation?: string;
+  age?: number;
+  interested_in?: string;
+  image_url?: string;
 }
 
 export interface NearbyStore {
   nearbyUsers: NearbyUser[];
   selectedUser: NearbyUser | null;
+  refetchSignal: number;
+  discoveryFilter: string;
   setNearbyUsers: (users: NearbyUser[]) => void;
   setSelectedUser: (user: NearbyUser | null) => void;
+  setDiscoveryFilter: (filter: string) => void;
+  triggerRefetch: () => void;
 }
 
 export const useNearbyStore = create<NearbyStore>((set) => ({
   nearbyUsers: [],
   selectedUser: null,
+  refetchSignal: 0,
+  discoveryFilter: 'Everyone',
   setNearbyUsers: (users: NearbyUser[]) => set(() => ({ nearbyUsers: users })),
   setSelectedUser: (user: NearbyUser | null) => set(() => ({ selectedUser: user })),
+  setDiscoveryFilter: (filter: string) => set(() => ({ discoveryFilter: filter })),
+  triggerRefetch: () => set((state) => ({ refetchSignal: state.refetchSignal + 1 })),
 }));

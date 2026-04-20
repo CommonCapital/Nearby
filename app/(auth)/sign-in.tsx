@@ -56,21 +56,21 @@ const SignIn = () => {
   }, [isLoaded, form]);
 
   return (
-    <ScrollView className="flex-1 bg-white swiss-grid">
-      <View className="flex-1 bg-white">
-        <View className="relative w-full h-[220px] flex justify-end pb-10 px-8 bg-white border-b-2 border-primary shadow-orangeMedium">
-          <Text className="text-4xl text-primary font-JakartaExtraBold tracking-tighter uppercase">
-            IDENTIFY👋
+    <ScrollView className="flex-1 bg-flesh aura-bg">
+      <View className="flex-1">
+        <View className="relative w-full h-[280px] flex justify-end pb-12 px-10 bg-[#4D0011] border-b border-primary/20 shadow-noir rounded-b-organic-lg">
+          <Text className="text-5xl text-primary font-JakartaExtraBold tracking-tighter">
+            Imperial Sync
           </Text>
-          <Text className="text-primary/60 mt-3 font-JakartaMedium text-base uppercase tracking-widest text-xs">
-            Enter credentials to synchronize with nearby identifiers.
+          <Text className="text-primary/60 mt-4 font-JakartaMedium text-lg leading-7">
+            Re-synchronize your identifier with the grandeur mesh.
           </Text>
         </View>
 
         <View className="p-8">
           <InputField
             label="ID / EMAIL"
-            placeholder="ACCESS_EMAIL@DOMAIN.COM"
+            placeholder="ACCESS_EMAIL"
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
@@ -88,19 +88,19 @@ const SignIn = () => {
           />
 
           <CustomButton
-            title="Authenticate"
+            title="Authenticate Pulse"
             onPress={onSignInPress}
-            className="mt-8 shadow-orangeStrong"
+            className="mt-10 shadow-noir"
           />
 
           <OAuth />
 
           <Link
             href="/sign-up"
-            className="text-base text-center text-primary/40 mt-12 lowercase tracking-wider"
+            className="text-lg text-center text-primary/60 mt-12 font-JakartaMedium"
           >
-            No identification?{" "}
-            <Text className="text-primary font-JakartaBold uppercase">Establish Node</Text>
+            New to the mesh?{" "}
+            <Text className="text-primary font-JakartaExtraBold">Register Grandeur</Text>
           </Link>
         </View>
       </View>

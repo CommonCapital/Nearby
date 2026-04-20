@@ -10,8 +10,8 @@ const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
     <TouchableOpacity
       onPress={setSelected}
       className={`${
-        selected === item.id ? "bg-primary/10 border-primary" : "bg-white border-primary/5"
-      } flex flex-row items-center justify-between py-5 px-3 rounded-brutalist border`}
+        selected === item.id ? "bg-primary/20 border-primary" : "bg-surface border-primary/5"
+      } flex flex-row items-center justify-between py-5 px-4 rounded-organic border shadow-pulse mb-3`}
     >
       <Image
         source={{ uri: item.profile_image_url }}
@@ -40,7 +40,7 @@ const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
             |
           </Text>
 
-          <Text className="text-sm font-JakartaMedium text-primary/70">
+          <Text className="text-sm font-JakartaMedium text-primary/80">
             {formatTime(item.time!)}
           </Text>
 
@@ -48,7 +48,7 @@ const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
             |
           </Text>
 
-          <Text className="text-sm font-JakartaMedium text-primary/70">
+          <Text className="text-sm font-JakartaMedium text-primary/80">
             {item.car_seats} seats
           </Text>
         </View>

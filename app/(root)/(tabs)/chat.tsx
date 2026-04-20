@@ -1,84 +1,155 @@
 import { useAuth } from "@clerk/expo";
 import { useEffect, useState } from "react";
-import { FlatList, Text, View, ActivityIndicator, Image, TouchableOpacity } from "react-native";
+import { FlatList, Text, View, ActivityIndicator, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import { fetchAPI } from "@/lib/fetch";
 import { icons } from "constant";
+import { useLocationStore } from "@/store";
 
 export default function Chat() {
   const { userId } = useAuth();
+  const { theme } = useLocationStore();
   const [friends, setFriends] = useState<any[]>([]);
+  const [pending, setPending] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const fetchFriends = async () => {
+  const fetchSignals = async () => {
     try {
       const res = await fetchAPI(`/(api)/requests?userId=${userId}`);
-      if (res && res.friends) {
-        setFriends(res.friends);
+      if (res) {
+        setFriends(res.friends || []);
+        setPending(res.pending || []);
       }
     } catch (err) {
-      console.error("Failed to fetch friends", err);
+      console.error("Failed to fetch signals", err);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleStatusUpdate = async (requestId: string, status: 'accepted' | 'declined') => {
+    try {
+      setUpdatingId(requestId);
+      await fetchAPI(`/(api)/requests`, {
+        method: 'PATCH',
+        body: JSON.stringify({ requestId, status }),
+      });
+      // Immediate optimistic update or refetch
+      fetchSignals();
+    } catch (err) {
+      Alert.alert("Error", "Failed to update signal status.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   useEffect(() => {
-    fetchFriends();
-    const interval = setInterval(fetchFriends, 10000);
+    fetchSignals();
+    const interval = setInterval(fetchSignals, 10000);
     return () => clearInterval(interval);
   }, [userId]);
 
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="px-6 py-8 flex-1 bg-white">
-        <Text className="text-4xl font-JakartaExtraBold text-[#0B1F3B] mb-2 tracking-tight">
-          Connections
+  const renderPulse = ({ item }: { item: any }) => (
+    <View className="bg-surface/80 p-6 mb-4 rounded-organic border border-primary shadow-pulse flex flex-row items-center">
+      <View className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mr-4">
+        <Text className="text-background font-JakartaBold text-lg">
+          {item.sender_name?.slice(0, 2).toUpperCase() || 'AN'}
         </Text>
-        <Text className="text-[#0B1F3B80] font-JakartaMedium mb-8">
-          Mutual approaches and active contracts.
+      </View>
+      <View className="flex-1">
+        <Text className="text-primary font-JakartaBold text-lg">{item.sender_name || "Unknown Signal"}</Text>
+        <Text className="text-primary/60 text-xs font-JakartaMedium italic mt-1">"{item.note}"</Text>
+      </View>
+      <View className="flex flex-row gap-2">
+        <TouchableOpacity 
+          onPress={() => handleStatusUpdate(item.id, 'accepted')}
+          disabled={!!updatingId}
+          className="bg-primary px-3 py-2 rounded-pill"
+        >
+          <Text className="text-background font-JakartaBold text-[10px]">ACCEPT</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => handleStatusUpdate(item.id, 'declined')}
+          disabled={!!updatingId}
+          className="bg-surface border border-primary/20 px-3 py-2 rounded-pill"
+        >
+          <Text className="text-primary font-JakartaBold text-[10px]">DECLINE</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  return (
+    <View className={`flex-1 theme-${theme}`}>
+    <SafeAreaView className="flex-1 bg-background aura-bg">
+      <View className="px-6 pt-12 pb-24 flex-1">
+        <Text className="text-5xl font-JakartaExtraBold text-primary mb-2 tracking-tighter">
+          Mesh
+        </Text>
+        <Text className="text-primary/40 font-JakartaBold mb-10 text-xs uppercase tracking-[0.3em]">
+          Signal Syncing Active
         </Text>
 
         {loading ? (
-          <ActivityIndicator size="large" color="#0B1F3B" className="mt-10" />
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="hsla(var(--primary), 1)" />
+          </View>
         ) : (
-          <FlatList
-            data={friends}
-            keyExtractor={(item) => item.clerk_id}
-            ListEmptyComponent={() => (
-              <View className="flex flex-col items-center justify-center mt-20 border border-[#0B1F3B1A] p-8 rounded-[4px] bg-[#FFFFFF]">
-                <Text className="text-[#0B1F3B80] font-JakartaMedium text-base">No active connections yet.</Text>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {pending.length > 0 && (
+              <View className="mb-12">
+                <Text className="text-primary/40 font-JakartaBold uppercase tracking-widest text-[10px] mb-6">SIGNALS INBOUND ({pending.length})</Text>
+                {pending.map((item) => (
+                   <View key={item.id}>
+                      {renderPulse({ item })}
+                   </View>
+                ))}
               </View>
             )}
-            renderItem={({ item }) => (
-              <TouchableOpacity 
-                onPress={() => router.push(`/(root)/chat/${item.clerk_id}`)}
-                className="flex flex-row items-center bg-white p-6 mb-4 rounded-[4px] border border-[#0B1F3B1A]"
-                style={{ shadowColor: '#0B1F3B', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.12, shadowRadius: 32, elevation: 2 }}
-              >
-                <View className="w-12 h-12 bg-[#0B1F3B] rounded-[2px] flex items-center justify-center mr-5">
-                    <Text className="text-white font-JakartaBold text-lg">
-                      {item.name?.slice(0, 2).toUpperCase() || 'AN'}
-                    </Text>
-                </View>
 
-                <View className="flex-1 flex flex-col">
-                  <Text className="font-JakartaBold text-xl text-[#0B1F3B] tracking-tight">
-                    {item.name || "Anonymous"}
-                  </Text>
-                  <Text className="text-sm font-JakartaMedium text-[#0B1F3B80] mt-1">
-                    EXECUTE CHAT PROTOCOL
-                  </Text>
-                </View>
-                
-                <Image source={icons.to} style={{ tintColor: '#0B1F3B', opacity: 0.3 }} className="w-5 h-5" />
-              </TouchableOpacity>
-            )}
-          />
+            <View>
+              <Text className="text-primary/40 font-JakartaBold uppercase tracking-widest text-[10px] mb-6">MUTUAL CONNECTIONS</Text>
+              <FlatList
+                data={friends}
+                keyExtractor={(item) => item.clerk_id}
+                scrollEnabled={false}
+                ListEmptyComponent={() => (
+                  <View className="flex flex-col items-center justify-center mt-10 border border-primary/10 p-10 rounded-organic bg-surface/20">
+                    <Text className="text-primary/30 font-JakartaMedium text-sm">NO ACTIVE MATCHES</Text>
+                  </View>
+                )}
+                renderItem={({ item }) => (
+                  <TouchableOpacity 
+                    onPress={() => router.push(`/(root)/chat/${item.clerk_id}`)}
+                    className="flex flex-row items-center bg-surface/60 p-6 mb-4 rounded-organic border border-primary/5 shadow-noir"
+                  >
+                    <View className="w-14 h-14 bg-surface rounded-full border border-primary/20 flex items-center justify-center mr-5 shadow-pulse">
+                        <Text className="text-primary font-JakartaBold text-xl">
+                          {item.name?.slice(0, 2).toUpperCase() || 'AN'}
+                        </Text>
+                    </View>
+
+                    <View className="flex-1 flex flex-col">
+                      <Text className="font-JakartaExtraBold text-xl text-primary tracking-tight">
+                        {item.name || "Anonymous"}
+                      </Text>
+                      <Text className="text-[10px] font-JakartaBold text-primary/40 mt-1 uppercase tracking-widest">
+                        ESTABLISHED NODE
+                      </Text>
+                    </View>
+                    
+                    <Image source={icons.to} className="w-5 h-5 tint-primary opacity-20" />
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </ScrollView>
         )}
       </View>
     </SafeAreaView>
+    </View>
   );
 }

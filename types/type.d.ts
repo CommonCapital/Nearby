@@ -124,6 +124,8 @@ declare interface LocationStore {
     address: string;
   }) => void;
   setIsVisible: (visible: boolean) => void;
+  theme: "rose" | "golden" | "burgundy";
+  setTheme: (theme: "rose" | "golden" | "burgundy") => void;
 }
 
 declare interface DriverStore {

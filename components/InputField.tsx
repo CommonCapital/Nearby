@@ -32,15 +32,15 @@ const InputField = ({
             {label}
           </Text>
           <View
-            className={`flex flex-row justify-start items-center relative bg-white h-[48px] rounded-brutalist border border-primary/30 focus:border-primary focus:border-2 ${containerStyle}`}
+            className={`flex flex-row justify-start items-center relative bg-surface h-[56px] rounded-organic border border-primary/20 focus:border-primary/60 focus:border-2 ${containerStyle}`}
           >
             {icon && (
-              <Image source={icon} className={`w-5 h-5 ml-4 opacity-50 tint-primary ${iconStyle}`} />
+              <Image source={icon} className={`w-5 h-5 ml-4 opacity-40 tint-primary ${iconStyle}`} />
             )}
             <TextInput
-              className={`p-4 font-JakartaMedium text-[15px] flex-1 text-primary ${inputStyle} text-left`}
+              className={`p-4 font-JakartaMedium text-[16px] flex-1 text-primary ${inputStyle} text-left`}
               secureTextEntry={secureTextEntry}
-              placeholderTextColor="#FF6A0066"
+              placeholderTextColor="hsla(var(--primary), 0.5)"
               {...props}
             />
           </View>

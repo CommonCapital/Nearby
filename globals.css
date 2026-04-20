@@ -4,18 +4,45 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 24 100% 50%;
-    --muted: 0 0% 96%;
-    --accent: 24 100% 50%;
+    --primary: 335 47% 58%; /* Rose Default */
+    --secondary: 35 83% 54%; /* Golden Hour */
+    --background: 335 47% 12%; 
+    --surface: 335 47% 18%;
+    --glow: 212, 83, 126;
+  }
+
+  .theme-rose {
+    --primary: 335 47% 58%;
+    --secondary: 35 83% 54%;
+    --background: 335 47% 12%;
+    --surface: 335 47% 18%;
+    --glow: 212, 83, 126;
+  }
+
+  .theme-golden {
+    --primary: 35 83% 54%;
+    --secondary: 340 60% 58%;
+    --background: 30 47% 12%;
+    --surface: 35 47% 18%;
+    --glow: 239, 159, 39;
+  }
+
+  .theme-burgundy {
+    --primary: 43 64% 52%;
+    --secondary: 345 100% 15%;
+    --background: 345 100% 15%;
+    --surface: 345 60% 20%;
+    --glow: 212, 175, 55;
   }
 }
 
 @layer utilities {
-  .swiss-grid {
-    background-size: 40px 40px;
+  .aura-bg {
+    background-color: hsl(var(--background));
     background-image: 
-      linear-gradient(to right, rgba(255, 106, 0, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 106, 0, 0.05) 1px, transparent 1px);
+      radial-gradient(at 0% 0%, rgba(var(--glow), 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(var(--glow), 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(var(--glow), 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(var(--glow), 0.15) 0px, transparent 50%);
   }
 }
