@@ -302,15 +302,18 @@ export default function Home() {
                 <Text className="text-3xl font-JakartaExtraBold text-primary tracking-tight">
                   {selectedUser?.name}
                 </Text>
-                <View className="flex flex-row items-center mt-1">
-                  <View className="bg-primary/10 px-3 py-1 rounded-pill mr-2">
+                <View className="flex flex-row items-center mt-1.5">
+                  <View className="bg-primary/10 px-3 py-1 rounded-pill mr-3">
                     <Text className="text-primary font-JakartaBold text-[10px] uppercase">
                       {selectedUser?.gender || 'Unknown Signal'}
                     </Text>
                   </View>
-                  <Text className="text-primary/60 font-JakartaBold text-xs">
-                    {selectedUser?.age ? `${selectedUser.age} Cycles` : ''}
-                  </Text>
+                  <View className="flex flex-row items-center">
+                    <View className="w-1.5 h-1.5 rounded-full bg-primary/40 mr-2" />
+                    <Text className="text-primary/70 font-JakartaBold text-xs">
+                      {selectedUser?.age ? `${selectedUser.age} Cycles` : 'Indeterminate Cycle'}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>

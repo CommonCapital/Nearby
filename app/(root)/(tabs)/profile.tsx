@@ -10,6 +10,8 @@ import { THEMES } from "constant";
 
 const IDENTITIES = ['Straight Man', 'Straight Woman', 'Gay', 'Lesbian', 'Bi-sexual', 'A-sexual'];
 
+import * as ImagePicker from 'expo-image-picker';
+
 const ChipSelector = ({ label, options, selected, onSelect, theme = 'rose', editable = true }: any) => (
   <View className="mb-6 w-full">
     <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Jakarta-Bold', textTransform: 'uppercase', fontSize: 9, letterSpacing: 1, marginBottom: 12 }}>{label}</Text>
@@ -60,6 +62,7 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // Sync profile from DB on mount
   useEffect(() => {
@@ -84,6 +87,36 @@ const Profile = () => {
     };
     fetchProfile();
   }, [user?.id]);
+
+  const handlePickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets[0].base64) {
+        setUploading(true);
+        const base64 = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        
+        await user?.setProfileImage({
+          file: base64,
+        });
+        
+        // Sync the image URL immediately after upload
+        await handleSave();
+        Alert.alert("Success", "Identity Signal updated successfully.");
+      }
+    } catch (error: any) {
+      console.error("Upload error", error);
+      Alert.alert("Error", error.message || "Failed to upload image.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -110,7 +143,7 @@ const Profile = () => {
       });
 
       setIsEditing(false);
-      Alert.alert("Grandeur", "Identity mesh synchronized successfully.");
+      if (!uploading) Alert.alert("Grandeur", "Identity mesh synchronized successfully.");
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to update profile.");
     } finally {
@@ -150,14 +183,28 @@ const Profile = () => {
           </View>
 
           <View className="flex items-center justify-center my-10">
-            <View className="p-2 bg-surface rounded-full shadow-pulse border-2 border-primary/20">
+            <View className="p-2 bg-surface rounded-full shadow-pulse border-2 border-primary/20 relative">
               <Image
                 source={{
-                  uri: user?.externalAccounts[0]?.imageUrl ?? user?.imageUrl,
+                  uri: user?.imageUrl,
                 }}
                 style={{ width: 120, height: 120, borderRadius: 60 }}
                 className="rounded-full h-[120px] w-[120px] border-4 border-background"
               />
+              
+              {isEditing && (
+                <TouchableOpacity 
+                   onPress={handlePickImage}
+                   disabled={uploading}
+                   className="absolute bottom-1 right-1 bg-primary w-10 h-10 rounded-full items-center justify-center border-4 border-background shadow-lg"
+                >
+                   {uploading ? (
+                     <ActivityIndicator size="small" color="#FFF" />
+                   ) : (
+                     <Text className="text-white font-bold text-lg">+</Text>
+                   )}
+                </TouchableOpacity>
+              )}
             </View>
           </View>
 
