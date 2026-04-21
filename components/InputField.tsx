@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   TextInput,
   View,
@@ -5,11 +6,13 @@ import {
   Image,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Keyboard,
   Platform,
 } from "react-native";
 
 import { InputFieldProps } from "types/type";
+import { icons } from "constant";
 
 const InputField = ({
   label,
@@ -20,8 +23,11 @@ const InputField = ({
   inputStyle,
   iconStyle,
   className,
+  isPassword,
   ...props
 }: InputFieldProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -39,10 +45,24 @@ const InputField = ({
             )}
             <TextInput
               className={`p-4 font-JakartaMedium text-[16px] flex-1 text-primary ${inputStyle} text-left`}
-              secureTextEntry={secureTextEntry}
+              secureTextEntry={isPassword ? !showPassword : secureTextEntry}
               placeholderTextColor="hsla(var(--primary), 0.5)"
               {...props}
             />
+            {isPassword && (
+              <TouchableOpacity 
+                onPress={() => setShowPassword(!showPassword)}
+                className="pr-5"
+                activeOpacity={0.7}
+              >
+                <Image 
+                  source={showPassword ? icons.eye : icons.eyecross} 
+                  style={{ tintColor: '#FFD700' }}
+                  className={`w-7 h-7 ${showPassword ? 'opacity-100' : 'opacity-50'}`} 
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </TouchableWithoutFeedback>

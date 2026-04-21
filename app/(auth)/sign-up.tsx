@@ -130,6 +130,7 @@ const { isSignedIn, isLoaded } = useAuth({ treatPendingAsSignedOut: false })
             placeholder="SECURE_CODE"
             icon={icons.lock}
             secureTextEntry={true}
+            isPassword={true}
             textContentType="password"
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
